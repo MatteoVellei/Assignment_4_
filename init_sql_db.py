@@ -1,7 +1,6 @@
 import sqlite3
 
 from databases import SQL_FILE, SQL_TABLE, load_and_split
-from replication import reset_log
 
 # Create the SQL database (SQLite) and fill it with its part of the CSV file:
 # the rows marked 'sql' (only in SQL) and 'both' (also copied to NoSQL)
@@ -33,9 +32,6 @@ def create_sql_db():
     sql_rows.to_sql(SQL_TABLE, conn, if_exists="append", index=False)
     conn.commit()
     conn.close()
-
-    # A fresh database invalidates the old replication history
-    reset_log()
 
     print(f"SQL database '{SQL_FILE}' created with {len(sql_rows)} records "
           f"({(sql_rows['location'] == 'sql').sum()} SQL only, "

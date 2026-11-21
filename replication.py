@@ -26,8 +26,13 @@ REPLICATION_FILE = "replication_log.db"
 
 
 def get_connection():
-    # Open the replication log database and create its tables the first time
-    conn = sqlite3.connect(REPLICATION_FILE)
+    # Open a connection to the replication log database
+    return sqlite3.connect(REPLICATION_FILE)
+
+
+def create_log():
+    # Create the replication log database and its tables if they do not exist yet
+    conn = get_connection()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS replication_log (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +47,8 @@ def get_connection():
             created    TEXT NOT NULL
         )""")
     conn.execute("CREATE TABLE IF NOT EXISTS settings (name TEXT PRIMARY KEY, value TEXT)")
-    return conn
+    conn.commit()
+    conn.close()
 
 
 def reset_log():
@@ -189,3 +195,9 @@ def check_consistency():
             "status": "in sync" if equal else "different",
         })
     return pd.DataFrame(rows)
+
+if __name__ == "__main__":
+    # Run 'python replication.py' to create the replication log and make sure it starts empty
+    create_log()
+    reset_log()
+    print("Replication log created")

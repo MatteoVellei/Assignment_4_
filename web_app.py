@@ -1,14 +1,21 @@
+import os
+
 import pandas as pd
 import streamlit as st
 
-from databases import DATA_COLUMNS, GET, KEY, META_COLUMNS, READ_ALL, now
-from replication import (check_consistency, delete_record, is_paused, pending_count,
-                         read_log, replicate, save_record, set_paused)
+from databases import DATA_COLUMNS, GET, KEY, META_COLUMNS, NOSQL_FILE, READ_ALL, SQL_FILE, now
+from replication import (REPLICATION_FILE, check_consistency, delete_record, is_paused,
+                         pending_count, read_log, replicate, save_record, set_paused)
 
 # Configure the Streamlit page layout and title
 st.set_page_config(page_title="Sales Data Manager", layout="wide")
 
 st.title("Data-Intensive Systems - SQL + NoSQL with Replication")
+
+# Stop the app with a clear message if the databases have not been created yet
+if not all(os.path.exists(f) for f in [SQL_FILE, NOSQL_FILE, REPLICATION_FILE]):
+    st.error("Database files not found. Run 'init_sql_db.py', 'init_nosql_db.py' and 'python replication.py' first.")
+    st.stop()
 
 # Map sidebar names to the database they show ('all' merges both databases)
 VIEWS = {
@@ -111,7 +118,7 @@ try:
 
 except Exception as e:
     st.error(
-        f"Could not load the data. Make sure you ran 'init_sql_db.py' and 'init_nosql_db.py' first.\nDetails: {e}"
+        f"Could not load the data. Make sure you ran 'init_sql_db.py', 'init_nosql_db.py' and 'python replication.py' first.\nDetails: {e}"
     )
 
 # Show the result of the last save, add or delete after the page reloads
@@ -196,8 +203,3 @@ if log_df.empty:
     st.info("No changes replicated yet. Edit a record stored in both databases to see an entry here.")
 else:
     st.dataframe(log_df, width="stretch", hide_index=True)
-
-# Button to retry the pending entries by hand
-if st.button("Run replication now", disabled=is_paused()):
-    st.session_state["message"] = replicate()
-    st.rerun()

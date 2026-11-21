@@ -1,7 +1,6 @@
 from tinydb import TinyDB
 
 from databases import NOSQL_FILE, load_and_split
-from replication import reset_log
 
 # Create the NoSQL database (TinyDB) and fill it with its part of the CSV file:
 # the rows marked 'nosql' (only in NoSQL) and 'both' (also copied to SQL)
@@ -20,9 +19,6 @@ def create_nosql_db():
         for doc in documents:
             doc["version"] = int(doc["version"])
         table.insert_multiple(documents)
-
-    # A fresh database invalidates the old replication history
-    reset_log()
 
     print(f"NoSQL database '{NOSQL_FILE}' created with {len(nosql_rows)} documents "
           f"({(nosql_rows['location'] == 'nosql').sum()} NoSQL only, "
