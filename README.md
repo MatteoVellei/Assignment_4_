@@ -6,7 +6,7 @@
 | `databases.py` | Shared configuration (file names, columns), the split of the CSV into three parts, and functions to read/write both databases |
 | `init_sql_db.py` | Creates the SQL database (SQLite, `sales_sql.db`) with the *sql* and *both* rows |
 | `init_nosql_db.py` | Creates the NoSQL database (TinyDB, `sales_nosql.json`) with the *nosql* and *both* rows |
-| `replication.py` | Replication protocol: change log, delivery to the other database, pause switch, consistency check |
+| `replication.py` | Replication protocol: change log, propagation of changes to the other databas, pause switch, consistency check. It creates the replication log and makes sure it starts empty |
 | `web_app.py` | Streamlit front end: search, edit, insert, delete, replication monitor |
 
 ## How to run it
