@@ -14,6 +14,7 @@
 pip install -r requirements.txt
 python init_sql_db.py
 python init_nosql_db.py
+python init_log.py
 streamlit run web_app.py
 ```
 Run the commands from the project folder. To go back to the original data, run the two `init_*` scripts again.
