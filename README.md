@@ -14,10 +14,10 @@
 pip install -r requirements.txt
 python init_sql_db.py
 python init_nosql_db.py
-python init_log.py
+python replication.py
 streamlit run web_app.py
 ```
-Run the commands from the project folder. To go back to the original data, run the two `init_*` scripts again.
+Run the commands from the project folder. To go back to the original data, run all three initialisation commands again (init_sql_db.py, init_nosql_db.py and replication.py): the last one also empties the replication log.
 
 ## Data split
 The rule lives in one place, `load_and_split()` in `databases.py`: 1st row → SQL only, 2nd → NoSQL only, 3rd → both, and so on. With 36 rows this gives 12 / 12 / 12. Each init script takes only the rows that belong to its database.
